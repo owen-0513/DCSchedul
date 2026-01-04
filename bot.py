@@ -8,8 +8,19 @@ import asyncio
 TOKEN = os.getenv("DISCORD_TOKEN")  
 CHANNEL_ID = 1457376914867097691  
 TIMEZONE = pytz.timezone("Asia/Taipei") 
-REMIND_HOUR = 23
-REMIND_MINUTE = 20
+
+# 單純時間提醒 (每天)
+TIME_REMINDERS = {
+    (23, 25): "📌 提醒事項：記得百業活動"
+}
+
+# 星期 + 時間提醒
+WEEKDAY_REMINDERS = {
+    (23, 25): "📌 提醒事項：一決高下",       # 星期四 晚上9點
+    (23, 25): "📌 提醒事項：一決高下",       # 星期六 晚上9點
+    (23, 25): "📌 提醒事項：破軍殺將",     # 星期三 晚上9點半
+    (23, 25): "📌 提醒事項：破軍殺將"      # 星期六 晚上9點半
+}
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -22,8 +33,21 @@ async def on_ready():
 @tasks.loop(minutes=1)
 async def daily_reminder():
     now = datetime.now(TIMEZONE)
+    current_time = (now.hour, now.minute)
+    weekday_time = (now.weekday(), now.hour, now.minute)  # 星期 + 時間
 
-    if now.hour == REMIND_HOUR and now.minute == REMIND_MINUTE:
+    message_text = None
+
+    # 先檢查每天時間提醒
+    if current_time in TIME_REMINDERS:
+        message_text = TIME_REMINDERS[current_time]
+
+    # 再檢查星期時間提醒
+    elif weekday_time in WEEKDAY_REMINDERS:
+        message_text = WEEKDAY_REMINDERS[weekday_time]
+
+    # 如果有訊息要發送
+    if message_text:
         try:
             channel = await bot.fetch_channel(CHANNEL_ID)
             permissions = channel.permissions_for(channel.guild.me)
@@ -36,8 +60,8 @@ async def daily_reminder():
 
             content = (
                 f"{prefix}📢 **活動公告**\n\n"
-                f"🕙 現在時間：{now.strftime('%H:%M')}\n"
-                "📌 提醒事項：記得百業活動\n\n"
+                f"🕙 現在時間：{now.strftime('%a %H:%M')}\n"
+                f"{message_text}\n\n"
                 "— 系統自動公告 —"
             )
 
