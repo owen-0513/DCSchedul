@@ -8,8 +8,8 @@ import asyncio
 TOKEN = os.getenv("DISCORD_TOKEN")  
 CHANNEL_ID = 1457376914867097691  
 TIMEZONE = pytz.timezone("Asia/Taipei") 
-REMIND_HOUR = 22  
-REMIND_MINUTE = 15  
+REMIND_HOUR = 23
+REMIND_MINUTE = 20
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
