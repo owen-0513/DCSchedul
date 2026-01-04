@@ -3,14 +3,13 @@ import discord
 from discord.ext import tasks, commands
 from datetime import datetime, timedelta
 import pytz
+import asyncio 
 
-# ===== 設定區 =====
-TOKEN = os.getenv("DISCORD_TOKEN")
-CHANNEL_ID = 1457376914867097691
-TIMEZONE = pytz.timezone("Asia/Taipei")
-REMIND_HOUR = 22
-REMIND_MINUTE = 15
-# ==================
+TOKEN = os.getenv("DISCORD_TOKEN")  
+CHANNEL_ID = 1457376914867097691  
+TIMEZONE = pytz.timezone("Asia/Taipei") 
+REMIND_HOUR = 22  
+REMIND_MINUTE = 15  
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -26,7 +25,6 @@ async def daily_reminder():
 
     if now.hour == REMIND_HOUR and now.minute == REMIND_MINUTE:
         try:
-            # 取得頻道對象
             channel = await bot.fetch_channel(CHANNEL_ID)
             permissions = channel.permissions_for(channel.guild.me)
 
@@ -34,7 +32,6 @@ async def daily_reminder():
                 print(f"Bot 沒有發訊息權限到頻道 {channel.name} ({channel.id})")
                 return
 
-            # 決定是否可以用 @everyone
             prefix = "@everyone\n\n" if permissions.mention_everyone else ""
 
             content = (
@@ -54,8 +51,7 @@ async def daily_reminder():
         except Exception as e:
             print(f"其他錯誤: {e}")
 
-        # 避免同一分鐘內重複發送
         next_minute = (now + timedelta(minutes=1)).replace(second=0, microsecond=0)
-        await discord.utils.sleep_until(next_minute)
+        await asyncio.sleep((next_minute - now).total_seconds()) 
 
 bot.run(TOKEN)
