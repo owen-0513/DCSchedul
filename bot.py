@@ -70,7 +70,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Discord Bot 正在運行！"
+    return "Discord Bot on going！"
 
 def run_flask():
     app.run(host="0.0.0.0", port=10000)  # Render 可偵測的端口
