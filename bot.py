@@ -13,7 +13,7 @@ CHANNEL_ID = 1457376914867097691
 TIMEZONE = pytz.timezone("Asia/Taipei")
 
 TIME_REMINDERS = {
-    (22, 20): "📌 提醒事項：記得百業活動"
+    (22, 20): "📌 提醒事項：記得百業派對 全部都來打麻將泡澡"
 }
 
 WEEKDAY_REMINDERS = {
